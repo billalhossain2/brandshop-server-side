@@ -110,11 +110,16 @@ async function run() {
     })
 
 
-    //Put a route
-    app.put("/users/:id", (req, res)=>{})
-
-    //Delete a route
-    app.delete("/users/:id", (req, res)=>{})
+    //Add product to brand products 
+    app.post("/brand-products", async(req, res)=>{
+      try {
+      const productToBeAdded = req.body;
+      const result = await brandProductsCollection.insertOne(productToBeAdded)
+      res.send(result)
+      } catch (error) {
+        res.status(500).json({message:"There is a server side error", error:error.message})
+      }
+    })
 
 
   } finally {
