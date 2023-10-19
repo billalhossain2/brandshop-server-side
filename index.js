@@ -67,9 +67,7 @@ async function run() {
     app.get("/brand-products/details/:productId", async(req, res)=>{
       try {
         const productId = req.params.productId;
-        console.log(productId)
         const query = {_id:new ObjectId(productId)}
-        console.log("Query =======> ", query)
         const result = await brandProducts.findOne(query);
         res.send(result)
         } catch (error) {
