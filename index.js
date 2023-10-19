@@ -1,7 +1,7 @@
 const express = require('express')
 const dotenv = require('dotenv')
 const cors = require('cors')
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const app = express();
 const port = process.env.PORT || 9000;
@@ -38,10 +38,44 @@ async function run() {
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
     //collection
-    const demoCollection = client.db('demoDB').collection('demoUsers');
+    const brandsCollection = client.db('techStore').collection('brands');
+    const brandProducts = client.db('techStore').collection('brandProducts');
 
     //Get all route
-    app.get("/users", (req, res)=>{})
+    app.get("/brands", async(req, res)=>{
+      try {
+        const result = await brandsCollection.find().toArray();
+        res.send(result);
+      } catch (error) {
+        res.status(500).json({message:"There is a server side error", error:error.message})
+      }
+    })
+
+    //Get products by brand name
+    app.get("/brand-products/:brandName", async(req, res)=>{
+      try {
+      const brandName = req.params.brandName;
+      const query = {brand_name:brandName}
+      const result = await brandProducts.find(query).toArray();
+      res.send(result)
+      } catch (error) {
+        res.status(500).json({message:"There is a server side error", error:error.message})
+      }
+    })
+
+    //Get brand product details by id
+    app.get("/brand-products/details/:productId", async(req, res)=>{
+      try {
+        const productId = req.params.productId;
+        console.log(productId)
+        const query = {_id:new ObjectId(productId)}
+        console.log("Query =======> ", query)
+        const result = await brandProducts.findOne(query);
+        res.send(result)
+        } catch (error) {
+          res.status(500).json({message:"There is a server side error", error:error.message})
+        }
+    })
 
     //Get a route
     app.get("/users/:id", (req, res)=>{})
