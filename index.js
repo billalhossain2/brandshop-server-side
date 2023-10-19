@@ -39,7 +39,8 @@ async function run() {
 
     //collection
     const brandsCollection = client.db('techStore').collection('brands');
-    const brandProducts = client.db('techStore').collection('brandProducts');
+    const brandProductsCollection = client.db('techStore').collection('brandProducts');
+    const cartCollection = client.db('techStore').collection('cart');
 
     //Get all route
     app.get("/brands", async(req, res)=>{
@@ -56,7 +57,7 @@ async function run() {
       try {
       const brandName = req.params.brandName;
       const query = {brand_name:brandName}
-      const result = await brandProducts.find(query).toArray();
+      const result = await brandProductsCollection.find(query).toArray();
       res.send(result)
       } catch (error) {
         res.status(500).json({message:"There is a server side error", error:error.message})
@@ -68,18 +69,46 @@ async function run() {
       try {
         const productId = req.params.productId;
         const query = {_id:new ObjectId(productId)}
-        const result = await brandProducts.findOne(query);
+        const result = await brandProductsCollection.findOne(query);
         res.send(result)
         } catch (error) {
           res.status(500).json({message:"There is a server side error", error:error.message})
         }
     })
 
-    //Get a route
-    app.get("/users/:id", (req, res)=>{})
+    //Add a product to  cart route
+    app.post("/cart", async(req, res)=>{
+      try {
+      const productToBeAdded = req.body;
+      const result = await cartCollection.insertOne(productToBeAdded)
+      res.send(result)
+      } catch (error) {
+        res.status(500).json({message:"There is a server side error", error:error.message})
+      }
+    })
 
-    //Post a route
-    app.post("/users", (req, res)=>{})
+    //Get all products from cart route
+    app.get("/cart", async(req, res)=>{
+      try {
+      const result = await cartCollection.find().toArray();
+      res.send(result)
+      } catch (error) {
+        res.status(500).json({message:"There is a server side error", error:error.message})
+      }
+    })
+
+    //Remove a product from cart route
+    app.delete("/cart/:productId", async(req, res)=>{
+      try {
+      const productId = req.params.productId;
+      const query = {_id:new ObjectId(productId)}
+      const result = await cartCollection.deleteOne(query);
+      res.send(result)
+      } catch (error) {
+        res.status(500).json({message:"There is a server side error", error:error.message})
+      }
+    })
+
 
     //Put a route
     app.put("/users/:id", (req, res)=>{})
