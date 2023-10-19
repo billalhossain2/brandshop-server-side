@@ -122,6 +122,21 @@ async function run() {
     })
 
 
+    //Update a product by id
+    app.put("/brand-products/:productId", async(req, res)=>{
+      try {
+        const productId = req.params.productId;
+        const options = {upsert:true}
+        const updateDoc = {$set:req.body}
+        const query = {_id:new ObjectId(productId)}
+        const result = await brandProductsCollection.updateOne(query, updateDoc, options);
+        res.send(result)
+        } catch (error) {
+          res.status(500).json({message:"There is a server side error", error:error.message})
+        }
+    })
+
+
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
