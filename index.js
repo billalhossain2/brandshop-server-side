@@ -36,6 +36,10 @@ async function run() {
     const brandProductsCollection = client.db('techStore').collection('brandProducts');
     const cartCollection = client.db('techStore').collection('cart');
 
+    const blogsCollection = client.db('techStore').collection('blogs');
+    const servicesCollection = client.db('techStore').collection('services');
+    const viewedProductsCollection = client.db('techStore').collection('viewedProducts');
+
     //Get all route
     app.get("/brands", async(req, res)=>{
       try {
@@ -129,6 +133,36 @@ async function run() {
         } catch (error) {
           res.status(500).json({message:"There is a server side error", error:error.message})
         }
+    })
+
+    // Get All Blogs 
+    app.get("/blogs", async(req, res)=>{
+      try {
+        const result = await blogsCollection.find().toArray();
+        res.send(result);
+      } catch (error) {
+        res.status(500).json({message:"There is a server side error", error:error.message})
+      }
+    })
+
+    // Get All Services 
+    app.get("/services", async(req, res)=>{
+      try {
+        const result = await servicesCollection.find().toArray();
+        res.send(result);
+      } catch (error) {
+        res.status(500).json({message:"There is a server side error", error:error.message})
+      }
+    })
+
+    // Get All Services 
+    app.get("/viewed-products", async(req, res)=>{
+      try {
+        const result = await viewedProductsCollection.find().toArray();
+        res.send(result);
+      } catch (error) {
+        res.status(500).json({message:"There is a server side error", error:error.message})
+      }
     })
 
 
