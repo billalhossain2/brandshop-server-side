@@ -14,7 +14,7 @@ app.use(cors())
 
 //Default Route
 app.get("/", (req, res)=>{
-    res.send(`Assingment 10 Server is running on port ${port}`)
+    res.send(`Tech Store Server is running on port ${port}`)
 })
 
 //Mongodb connection string
@@ -31,12 +31,6 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-
     //collection
     const brandsCollection = client.db('techStore').collection('brands');
     const brandProductsCollection = client.db('techStore').collection('brandProducts');
@@ -88,9 +82,10 @@ async function run() {
     })
 
     //Get all products from cart route
-    app.get("/cart", async(req, res)=>{
+    app.get("/cart/:displayName", async(req, res)=>{
       try {
-      const result = await cartCollection.find().toArray();
+      const displayName = req.params.displayName;
+      const result = await cartCollection.find({displayName:displayName}).toArray();
       res.send(result)
       } catch (error) {
         res.status(500).json({message:"There is a server side error", error:error.message})
@@ -146,5 +141,5 @@ run().catch(console.dir);
 
 
 app.listen(port, (req, res)=>{
-    console.log(`Assingment 10 Server is listening at port ${port}`)
+    console.log(`Tech Store Server is listening at port ${port}`)
 })
